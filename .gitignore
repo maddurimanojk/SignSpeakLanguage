@@ -22,8 +22,11 @@ __pycache__/
 htmlcov/
 *.so
 
-# MediaPipe task binaries & raw external datasets (100MB+)
+# Processed sequence datasets & MediaPipe task binaries
+dataset_external_processed/
 data_external/raw/
+dataset/
+dataset_real/
 *.zip
 *.tar.gz
 *.task

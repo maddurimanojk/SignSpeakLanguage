@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "SignSpeak AI",
+    "slug": "signspeak-ai",
+    "version": "1.0.0",
+    "sdkVersion": "57.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "SignSpeak AI requires camera access to capture Indian Sign Language (ISL) hand gestures for real-time speech translation."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F172A"
+      },
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.nikhilreddy1407.signspeakai"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "SignSpeak AI requires camera access to capture Indian Sign Language (ISL) hand gestures for real-time speech translation."
+        }
+      ]
+    ],
+    "scheme": "signspeak-ai",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "130d7f76-9d1f-4500-a525-f326b66fcbca"
+      }
+    }
+  }
+}

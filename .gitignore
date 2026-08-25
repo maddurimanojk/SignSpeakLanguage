@@ -1,0 +1,45 @@
+# SignSpeak AI - Git Ignore Rules
+
+# Virtual environments
+venv/
+backend/venv*/
+env/
+ENV/
+
+# Node modules & build outputs
+node_modules/
+mobile/node_modules/
+web/node_modules/
+mobile/.expo/
+web/dist/
+
+# Python caches & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.so
+
+# MediaPipe task binaries & raw external datasets (100MB+)
+data_external/raw/
+*.zip
+*.tar.gz
+*.task
+
+# OS & Editor files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env & secret keys
+.env
+.env.local
+*.log

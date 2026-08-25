@@ -1,0 +1,20 @@
+# Render.com Blueprint for SignSpeak AI Deployment
+services:
+  # FastAPI AI Backend Service
+  - type: web
+    name: signspeak-ai-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    region: oregon
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+
+  # Web Research Platform
+  - type: web
+    name: signspeak-ai-web
+    env: static
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist

@@ -1,0 +1,10 @@
+{
+  "name": "signspeak-ai-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:all": "bash run_all_tests.sh",
+    "test:backend": "./backend/venv/bin/pytest backend/tests ml/tests",
+    "test:mobile": "cd mobile && npx jest"
+  }
+}

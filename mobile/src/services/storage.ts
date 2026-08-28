@@ -12,8 +12,8 @@ export const defaultSettings: AppSettings = {
   speechPitch: 1.0,
   speechVolume: 1.0,
   confidenceThreshold: 0.75,
-  backendUrl: 'http://localhost:8000',
-  isDemoMode: true,
+  backendUrl: process.env.EXPO_PUBLIC_API_URL || 'https://signspeak-ai-api.onrender.com',
+  isDemoMode: false,
   themeMode: 'dark',
   cameraType: 'back',
 };

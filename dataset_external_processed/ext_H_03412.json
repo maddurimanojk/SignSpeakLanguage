@@ -1,0 +1,11 @@
+{
+  "sample_id": "ext_H_03412",
+  "sign": "H",
+  "participant_id": "P_08",
+  "source_file": "H108.jpg",
+  "sequence_shape": [
+    15,
+    42
+  ],
+  "source_type": "EXTERNAL_REAL_ISL"
+}

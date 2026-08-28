@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Clock, Layers, ShieldCheck } from 'lucide-react';
+import { Award, Zap, Target, ShieldCheck, AlertCircle, Clock, Layers, AlertTriangle } from 'lucide-react';
 
 export const ResultsDashboard: React.FC = () => {
   return (
@@ -60,7 +60,7 @@ export const ResultsDashboard: React.FC = () => {
 
         {/* Audit Note */}
         <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-xs text-slate-400 leading-relaxed flex items-start gap-4">
-          <Info className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold text-white block mb-1">Academic Provenance Notice</span>
             SignSpeak AI distinguishes static ISL alphabet gesture recognition from full temporal ISL word/sentence translation. Held-out test evaluation results are published only after complete verification of dataset provenance and temporal sequence construction.

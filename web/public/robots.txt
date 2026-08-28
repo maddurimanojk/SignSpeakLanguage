@@ -1,0 +1,14 @@
+# Robots.txt for SignSpeak AI
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /learn
+Allow: /research
+Allow: /translate
+Allow: /login
+Allow: /signup
+Disallow: /dashboard
+Disallow: /history
+Disallow: /settings
+
+Sitemap: https://signspeak-ai.com/sitemap.xml

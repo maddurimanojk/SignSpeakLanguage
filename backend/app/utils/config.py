@@ -5,12 +5,13 @@ class Settings:
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     
-    # Environment & Demo settings
-    ENV: str = os.getenv("ENV", "development")
-    DEMO_MODE: bool = os.getenv("DEMO_MODE", "true").lower() == "true"
+    # Environment & Production settings
+    ENV: str = os.getenv("ENV", "production")
+    DEMO_MODE: bool = os.getenv("DEMO_MODE", "false").lower() == "true"
+    ALLOWED_ORIGINS: list = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:8081,https://signspeak-ai.vercel.app,https://signspeak-ai.com").split(",") if o.strip()]
     
     # Model configurations
-    MODEL_PATH: str = os.getenv("MODEL_PATH", "backend/app/models/isl_sign_model.keras")
+    MODEL_PATH: str = os.getenv("MODEL_PATH", "backend/app/models/isl_external_model.keras")
     MODEL_10_PATH: str = os.getenv("MODEL_10_PATH", "backend/app/models/isl_sign_model_10.keras")
     MODEL_27_PATH: str = os.getenv("MODEL_27_PATH", "backend/app/models/isl_sign_model.keras")
     

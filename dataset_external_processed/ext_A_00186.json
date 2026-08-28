@@ -1,0 +1,11 @@
+{
+  "sample_id": "ext_A_00186",
+  "sign": "A",
+  "participant_id": "P_07",
+  "source_file": "A267.jpg",
+  "sequence_shape": [
+    15,
+    42
+  ],
+  "source_type": "EXTERNAL_REAL_ISL"
+}

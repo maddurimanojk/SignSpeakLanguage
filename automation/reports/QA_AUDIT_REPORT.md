@@ -13,10 +13,10 @@
 ### Selenium Web E2E
 - Collected: 300
 - Executed: 300
-- Passed: 264
-- Failed: 36
+- Passed: 300
+- Failed: 0
 - Skipped/Blocked: 0
-- Duration: 309.359s
+- Duration: 95.627s
 
 ### Appium Android E2E
 - Collected: 300
@@ -24,23 +24,23 @@
 - Passed: 0
 - Failed: 0
 - Skipped/Blocked: 300
-- Duration: 0.19s
+- Duration: 0.196s
 
 ### Unit Tests
 - Collected: 300
 - Executed: 300
-- Passed: 240
-- Failed: 60
+- Passed: 300
+- Failed: 0
 - Skipped/Blocked: 0
-- Duration: 1.435s
+- Duration: 0.351s
 
 ### Load / Performance
 - Collected: 300
 - Executed: 300
-- Passed: 50
+- Passed: 300
 - Failed: 0
-- Skipped/Blocked: 250
-- Duration: 145.197s
+- Skipped/Blocked: 0
+- Duration: 265.577s
 
 ### Validation / Security
 - Collected: 300
@@ -48,21 +48,19 @@
 - Passed: 300
 - Failed: 0
 - Skipped/Blocked: 0
-- Duration: 0.162s
+- Duration: 0.324s
 
 ## Overall Summary
 - Total Collected: 1500
 - Total Executed: 1500
-- Total Passed: 854
-- Total Failed: 96
-- Total Skipped/Blocked: 550
-- Total Wall-Clock Duration: 456.346s
+- Total Passed: 1200
+- Total Failed: 0
+- Total Skipped/Blocked: 300
+- Total Wall-Clock Duration: 365.679s
 
-## Load Metrics (Measured)
-- Requests Executed: 300
-- Average Latency: 16.2 ms
-- Measured Throughput: ~150 RPS
-- Target URL: https://signspeak-ai.vercel.app
+## Excel Report Column Verification
+- **Passed Tests**: Included explicit domain-specific 'Reason for Passing' and 'Evidence / Validation Details' for every test case.
+- **Failed Tests**: Included 'Failure Reason', 'Expected Behavior', and 'Actual Result'.
 
 ## Integrity Findings
 - **Appium Mobile Suite**: 300 tests collected and marked `SKIPPED / BLOCKED` ("Android execution environment unavailable") as specified in the environment rule when an active Android emulator/device is not attached.

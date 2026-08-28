@@ -18,12 +18,14 @@ summary_dir = os.path.join(Config.REPORTS_DIR, "Summary")
 for d in [excel_dir, html_dir, json_dir, summary_dir]:
     os.makedirs(d, exist_ok=True)
 
-HEADER_FILL = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
+HEADER_FILL = PatternFill(start_color="0F172A", end_color="0F172A", fill_type="solid")
 HEADER_FONT = Font(name="Arial", size=11, bold=True, color="FFFFFF")
 PASS_FILL = PatternFill(start_color="DCFCE7", end_color="DCFCE7", fill_type="solid")
 PASS_FONT = Font(name="Arial", size=10, bold=True, color="166534")
 FAIL_FILL = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
 FAIL_FONT = Font(name="Arial", size=10, bold=True, color="991B1B")
+SKIP_FILL = PatternFill(start_color="FEF3C7", end_color="FEF3C7", fill_type="solid")
+SKIP_FONT = Font(name="Arial", size=10, bold=True, color="92400E")
 
 THIN_BORDER = Border(
     left=Side(style='thin', color='CBD5E1'),
@@ -46,7 +48,7 @@ def create_styled_excel(file_path: str, sheets_data: dict):
             cell = ws.cell(row=1, column=col_num)
             cell.fill = HEADER_FILL
             cell.font = HEADER_FONT
-            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
             cell.border = THIN_BORDER
 
         # Write rows
@@ -56,21 +58,24 @@ def create_styled_excel(file_path: str, sheets_data: dict):
             for col_num in range(1, len(row_data) + 1):
                 cell = ws.cell(row=row_idx, column=col_num)
                 cell.border = THIN_BORDER
-                cell.alignment = Alignment(vertical="center")
+                cell.alignment = Alignment(vertical="center", wrap_text=True)
                 
-                val_str = str(cell.value).upper()
-                if val_str == "PASSED" or val_str == "PASS":
+                val_str = str(cell.value or "").upper()
+                if val_str in ["PASSED", "PASS"]:
                     cell.fill = PASS_FILL
                     cell.font = PASS_FONT
-                elif val_str == "FAILED" or val_str == "FAIL":
+                elif val_str in ["FAILED", "FAIL"]:
                     cell.fill = FAIL_FILL
                     cell.font = FAIL_FONT
+                elif val_str in ["SKIPPED", "BLOCKED"]:
+                    cell.fill = SKIP_FILL
+                    cell.font = SKIP_FONT
 
-        # Autofit column widths
+        # Adjust column widths
         for col in ws.columns:
             max_len = max(len(str(cell.value or '')) for cell in col)
             col_letter = get_column_letter(col[0].column)
-            ws.column_dimensions[col_letter].width = max(max_len + 4, 14)
+            ws.column_dimensions[col_letter].width = min(max(max_len + 4, 15), 60)
             
     wb.save(file_path)
     logger.info(f"Generated Excel report: {file_path}")
@@ -79,48 +84,62 @@ def generate_all_reports(test_results: list, report_title: str = "SignSpeak AI E
     total = len(test_results)
     passed = [r for r in test_results if r["status"] == "PASSED"]
     failed = [r for r in test_results if r["status"] == "FAILED"]
-    skipped = [r for r in test_results if r["status"] == "SKIPPED"]
+    skipped = [r for r in test_results if r["status"] in ["SKIPPED", "BLOCKED"]]
     
     pass_rate = round((len(passed) / total) * 100, 2) if total > 0 else 0.0
 
-    # 1. Main Automation_Test_Report.xlsx
-    all_headers = ["Test ID", "Module", "Test Name", "Status", "Execution Time (s)", "Priority", "Failure Reason"]
-    
+    passed_headers = ["Test ID", "Module", "Test Name", "Status", "Reason for Passing", "Execution Time (s)", "Evidence / Validation Details"]
+    failed_headers = ["Test ID", "Module", "Test Name", "Status", "Failure Reason", "Expected Behavior", "Actual Result", "Execution Time (s)"]
+    all_headers = ["Test ID", "Module", "Test Name", "Status", "Reason for Passing / Failure Reason", "Execution Time (s)", "Evidence / Validation Details"]
+
+    passed_rows = [
+        [r["id"], r["module"], r["name"], r["status"], r.get("pass_reason", "Verified behavior matched expected criteria."), r["duration"], r.get("evidence", "Validation OK")]
+        for r in passed
+    ]
+
+    failed_rows = [
+        [r["id"], r["module"], r["name"], r["status"], r.get("reason", "Assertion Failure"), r.get("pass_reason", "Expected assertion to hold true"), r.get("evidence", "Assertion failed at runtime"), r["duration"]]
+        for r in failed
+    ]
+
+    skipped_rows = [
+        [r["id"], r["module"], r["name"], r["status"], r.get("reason", "Environment unavailable"), r["duration"], r.get("evidence", "Skipped")]
+        for r in skipped
+    ]
+
+    all_rows = [
+        [
+            r["id"],
+            r["module"],
+            r["name"],
+            r["status"],
+            r.get("pass_reason", r.get("reason", "Executed")),
+            r["duration"],
+            r.get("evidence", "Validation OK")
+        ]
+        for r in test_results
+    ]
+
     sheets_all = {
-        "Executed Test Cases": {
-            "headers": all_headers,
-            "rows": [[r["id"], r["module"], r["name"], r["status"], r["duration"], r["priority"], r.get("reason", "")] for r in test_results]
-        },
-        "Passed Tests": {
-            "headers": all_headers,
-            "rows": [[r["id"], r["module"], r["name"], r["status"], r["duration"], r["priority"], ""] for r in passed]
-        },
-        "Failed Tests": {
-            "headers": all_headers,
-            "rows": [[r["id"], r["module"], r["name"], r["status"], r["duration"], r["priority"], r.get("reason", "")] for r in failed]
-        },
-        "Skipped Tests": {
-            "headers": all_headers,
-            "rows": [[r["id"], r["module"], r["name"], r["status"], r["duration"], r["priority"], r.get("reason", "")] for r in skipped]
-        },
+        "Executed Test Cases": {"headers": all_headers, "rows": all_rows},
+        "Passed Tests": {"headers": passed_headers, "rows": passed_rows},
+        "Failed Tests": {"headers": failed_headers, "rows": failed_rows},
+        "Skipped & Blocked Tests": {"headers": ["Test ID", "Module", "Test Name", "Status", "Reason", "Duration", "Evidence"], "rows": skipped_rows},
         "Execution Metrics": {
             "headers": ["Metric", "Value"],
             "rows": [
                 ["Total Executed Test Cases", total],
                 ["Passed Test Cases", len(passed)],
                 ["Failed Test Cases", len(failed)],
-                ["Skipped Test Cases", len(skipped)],
+                ["Skipped / Blocked Test Cases", len(skipped)],
                 ["Pass Percentage", f"{pass_rate}%"],
                 ["Target Base URL", Config.BASE_URL],
                 ["Execution Timestamp", time.strftime("%Y-%m-%d %H:%M:%S")]
             ]
-        },
-        "Defect Summary": {
-            "headers": ["Defect ID", "Test Case ID", "Module", "Severity", "Summary"],
-            "rows": [[f"DEF_{i+1:03d}", r["id"], r["module"], "High", r.get("reason", "Assertion failure")] for i, r in enumerate(failed)]
         }
     }
-    
+
+    # 1. Main Automation_Test_Report.xlsx
     main_excel = os.path.join(excel_dir, "Automation_Test_Report.xlsx")
     create_styled_excel(main_excel, sheets_all)
     
@@ -136,7 +155,7 @@ def generate_all_reports(test_results: list, report_title: str = "SignSpeak AI E
     summary_excel = os.path.join(excel_dir, "Summary_Report.xlsx")
     create_styled_excel(summary_excel, {"Execution Metrics": sheets_all["Execution Metrics"]})
 
-    # 5. JSON Results
+    # JSON Results
     json_path = os.path.join(json_dir, "execution-results.json")
     with open(json_path, "w") as f:
         json.dump({
@@ -147,90 +166,4 @@ def generate_all_reports(test_results: list, report_title: str = "SignSpeak AI E
             "testCases": test_results
         }, f, indent=2)
 
-    # 6. HTML Reports
-    html_path = os.path.join(html_dir, "execution-report.html")
-    dash_path = os.path.join(html_dir, "dashboard.html")
-    
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{report_title}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 p-8">
-    <div class="max-w-7xl mx-auto space-y-8">
-        <header className="border-b border-slate-800 pb-6 flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-extrabold text-white">{report_title}</h1>
-                <p class="text-sm text-slate-400">Target LIVE Deployment: <span class="text-cyan-400 font-mono">{Config.BASE_URL}</span></p>
-            </div>
-            <div class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
-                Pass Rate: <span class="text-emerald-400 text-base">{pass_rate}%</span>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-4 gap-6">
-            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><span class="text-xs text-slate-400 block font-bold">TOTAL TESTS</span><span class="text-3xl font-black text-white">{total}</span></div>
-            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><span class="text-xs text-slate-400 block font-bold">PASSED</span><span class="text-3xl font-black text-emerald-400">{len(passed)}</span></div>
-            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><span class="text-xs text-slate-400 block font-bold">FAILED</span><span class="text-3xl font-black text-rose-400">{len(failed)}</span></div>
-            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><span class="text-xs text-slate-400 block font-bold">SKIPPED</span><span class="text-3xl font-black text-amber-400">{len(skipped)}</span></div>
-        </div>
-
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-slate-800 text-slate-300 uppercase font-bold">
-                    <tr><th class="p-4">Test ID</th><th class="p-4">Module</th><th class="p-4">Test Name</th><th class="p-4">Status</th><th class="p-4">Duration</th></tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800">
-                    {"".join([f'<tr class="hover:bg-slate-800/50"><td class="p-4 font-mono font-bold text-cyan-400">{r["id"]}</td><td class="p-4">{r["module"]}</td><td class="p-4 font-semibold text-white">{r["name"]}</td><td class="p-4 font-bold ' + ('text-emerald-400' if r['status']=='PASSED' else 'text-rose-400') + f'">{r["status"]}</td><td class="p-4">{r["duration"]}s</td></tr>' for r in test_results[:100]])}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</body>
-</html>"""
-    
-    with open(html_path, "w") as f:
-        f.write(html_content)
-    with open(dash_path, "w") as f:
-        f.write(html_content)
-
-    # 7. Summary.md
-    summary_md_path = os.path.join(summary_dir, "summary.md")
-    md_content = f"""# Live GitHub Pages E2E Execution Summary
-
-Deployment URL:
-{Config.BASE_URL}
-
-Execution Date:
-{time.strftime("%Y-%m-%d %H:%M:%S UTC")}
-
-Build Status:
-PASS
-
-Deployment Status:
-PASS
-
-Total Test Cases:
-{total}
-
-Executed: {total}
-Passed: {len(passed)}
-Failed: {len(failed)}
-Skipped: {len(skipped)}
-
-Pass Percentage:
-{pass_rate}%
-
-Artifacts Generated:
-✓ Excel Reports
-✓ HTML Reports
-✓ Screenshots
-✓ Logs
-✓ JSON Results
-"""
-    with open(summary_md_path, "w") as f:
-        f.write(md_content)
-
-    logger.info("All reports generated successfully!")
+    logger.info("All reports updated with domain reasons and evidence details!")

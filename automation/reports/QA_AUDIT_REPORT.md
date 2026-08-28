@@ -16,7 +16,7 @@
 - Passed: 300
 - Failed: 0
 - Skipped/Blocked: 0
-- Duration: 95.627s
+- Duration: 77.697s
 
 ### Appium Android E2E
 - Collected: 300
@@ -24,7 +24,7 @@
 - Passed: 0
 - Failed: 0
 - Skipped/Blocked: 300
-- Duration: 0.196s
+- Duration: 0.165s
 
 ### Unit Tests
 - Collected: 300
@@ -32,7 +32,7 @@
 - Passed: 300
 - Failed: 0
 - Skipped/Blocked: 0
-- Duration: 0.351s
+- Duration: 0.157s
 
 ### Load / Performance
 - Collected: 300
@@ -40,7 +40,7 @@
 - Passed: 300
 - Failed: 0
 - Skipped/Blocked: 0
-- Duration: 265.577s
+- Duration: 338.404s
 
 ### Validation / Security
 - Collected: 300
@@ -48,7 +48,7 @@
 - Passed: 300
 - Failed: 0
 - Skipped/Blocked: 0
-- Duration: 0.324s
+- Duration: 0.202s
 
 ## Overall Summary
 - Total Collected: 1500
@@ -56,7 +56,7 @@
 - Total Passed: 1200
 - Total Failed: 0
 - Total Skipped/Blocked: 300
-- Total Wall-Clock Duration: 365.679s
+- Total Wall-Clock Duration: 417.533s
 
 ## Excel Report Column Verification
 - **Passed Tests**: Included explicit domain-specific 'Reason for Passing' and 'Evidence / Validation Details' for every test case.
